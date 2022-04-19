@@ -1,24 +1,29 @@
 from aiohttp import web
-
-# import request
-
-
-url = "https://rickandmortyapi.com/api/character/{}"
+import requests
 
 
 async def handler_get(request):
+    url = "https://rickandmortyapi.com/api/character/{}"
     return web.Response(text=url.format(request.match_info['number']))
 
 
-# async def handler_post(self,request):
+async def handler_post(request):
+    API_ENDPOINT = "https://rickandmortyapi.com/api/character/"
+    headers = {'Localización': 'Málaga', 'Fecha': 'Martes 19 abril 2022'}
+    API_KEY = "XXXXXXXXXXXXXXXXX"
+    body = {
+        "name": "Rick and Morty website",
+        'api_code': API_KEY
+    }
+    r = requests.post(url=API_ENDPOINT, data=body, headers=headers)
 
 
 app = web.Application()
 
 app.add_routes(
     [
-        web.get('/{number}', handler_get)
-        # web.post('/post',handler.post)
+        web.get('/{number}', handler_get),
+        web.post('/post', handler_post)
     ]
 )
 
