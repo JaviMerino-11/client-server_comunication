@@ -1,39 +1,33 @@
-import json
-
 import aiohttp
-import requests
 from aiohttp import web
 
 
-async def handler_get(request):
+async def handler_get(request: web.Request):
+    # Buscar metodo para sacar body parecido a este (mirar documentacion request)
     numero = request.match_info.get('number')
     url = "https://rickandmortyapi.com/api/character/" + numero
-    response = requests.get(url)
-    data = response.json()
-    return web.Response(text=data['name'])
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            data = await response.json()  # Json response es el body de la respuesta
+
+    return web.json_response(data)  # Devuelve formato json (diccionario)
+    # return web.Response(text=data['name']) #Devuelve texto plano
 
 
-async def handler_post(request):
-    url = "http://0.0.0.0:8080/post"
-    header={
-    'Accept': 'application/json',
-    'Content-Type': 'multipart/form-data'
-    }
-    body_modificado = {
-        'FirstName': 'Javier',
-        'LastName': 'Merino'
-    }
-
-    response = requests.post(url, data=json.dumps(body_modificado),headers=header)
-    return web.Response(text=response)
+async def handler_post(request: web.Request):
+    local_url = 'http://0.0.0.0:8080/post'
+    async with aiohttp.ClientSession() as session:
+        async with session.post(local_url) as response:
+            body = await response.json()
+            return web.json_response(body)
 
 
 app = web.Application()
 
 app.add_routes(
     [
-        web.get('/{number}', handler_get),
-        web.post('/post', handler_post)
+        web.get('/{number}', handler_get)
+        # web.post('/post', handler_post)
     ]
 )
 
