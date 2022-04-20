@@ -6,7 +6,7 @@ async def handler_get(request: web.Request):
     numero = request.match_info.get('number')
     url = "https://rickandmortyapi.com/api/character/" + numero
     async with aiohttp.ClientSession() as session:
-        async with session.get(url) as response:
+        async with session.get(url) as response: #Tengo que crear sesion cliente porque llamo a otra API
             data = await response.json()  # Json response es el body de la respuesta
 
     return web.json_response(data)  # Devuelve formato json (diccionario)
